@@ -155,7 +155,6 @@ public class DBF implements Closeable {
 	 * @throws IOException       Java error caused by called methods
 	 * @throws SecurityException Java error caused by called methods, most likely trying to create on a remote system
 	 */
-
 	public DBF(String DBFname, boolean destroy)
 			throws xBaseJException, IOException, SecurityException {
 		createDBF(DBFname, DBFTypes.DBASEIII, destroy);
@@ -173,7 +172,6 @@ public class DBF implements Closeable {
 	 * @throws IOException       Java error caused by called methods
 	 * @throws SecurityException Java error caused by called methods, most likely trying to create on a remote system
 	 */
-
 	public DBF(String DBFname, DBFTypes format, boolean destroy)
 			throws xBaseJException, IOException, SecurityException {
 		createDBF(DBFname, format, destroy);
@@ -189,7 +187,6 @@ public class DBF implements Closeable {
 	 * @throws xBaseJException database not dbaseIII format
 	 * @throws IOException     Java error caused by called methods
 	 */
-
 	public DBF(String DBFname, char readOnly)
 			throws xBaseJException, IOException {
 		if (readOnly != DBF.READ_ONLY)
@@ -209,9 +206,7 @@ public class DBF implements Closeable {
 	 * @throws xBaseJException database not dbaseIII format
 	 * @throws IOException     Java error caused by called methods
 	 */
-
 	public DBF(String DBFname) throws xBaseJException, IOException {
-
 		readonly = false;
 		openDBF(DBFname);
 	}
@@ -230,7 +225,7 @@ public class DBF implements Closeable {
 
 	public DBF(String DBFname, boolean destroy, String inEncodeType)
 			throws xBaseJException, IOException, SecurityException {
-		setEncodingType(inEncodeType);
+		setEncoding(inEncodeType);
 		createDBF(DBFname, DBFTypes.DBASEIII, destroy);
 	}
 
@@ -247,14 +242,9 @@ public class DBF implements Closeable {
 	 * @throws IOException       Java error caused by called methods
 	 * @throws SecurityException Java error caused by called methods, most likely trying to create on a remote system
 	 */
-
-	public DBF(
-			String DBFname,
-			DBFTypes format,
-			boolean destroy,
-			String inEncodeType)
+	public DBF(String DBFname, DBFTypes format, boolean destroy, String inEncodeType)
 			throws xBaseJException, IOException, SecurityException {
-		setEncodingType(inEncodeType);
+		setEncoding(inEncodeType);
 		createDBF(DBFname, format, destroy);
 	}
 
@@ -269,15 +259,13 @@ public class DBF implements Closeable {
 	 * @throws xBaseJException database not dbaseIII format
 	 * @throws IOException     Java error caused by called methods
 	 */
-
 	public DBF(String DBFname, char readOnly, String inEncodeType)
 			throws xBaseJException, IOException {
-		if (readOnly != DBF.READ_ONLY)
-			throw new xBaseJException(
-					"Unknown readOnly indicator <" + readOnly + ">"
-			);
+		if (readOnly != DBF.READ_ONLY) {
+			throw new xBaseJException("Unknown readOnly indicator <" + readOnly + ">");
+		}
 		readonly = true;
-		setEncodingType(inEncodeType);
+		setEncoding(inEncodeType);
 		openDBF(DBFname);
 	}
 
@@ -291,12 +279,10 @@ public class DBF implements Closeable {
 	 * @throws xBaseJException database not dbaseIII format
 	 * @throws IOException     Java error caused by called methods
 	 */
-
 	public DBF(String DBFname, String inEncodeType)
 			throws xBaseJException, IOException {
-
 		readonly = false;
-		setEncodingType(inEncodeType);
+		setEncoding(inEncodeType);
 		openDBF(DBFname);
 	}
 
@@ -309,7 +295,6 @@ public class DBF implements Closeable {
 	 * @throws xBaseJException database not dbaseIII format
 	 * @throws IOException     Java error caused by called methods
 	 */
-
 	protected void openDBF(String DBFname) throws IOException, xBaseJException {
 		int i;
 		jNDX = null;
@@ -587,6 +572,7 @@ public class DBF implements Closeable {
 
 			tempDBF = new DBF(newName, format, true);
 			tempDBF.version = format;
+			tempDBF.language = this.language;
 			tempDBF.MDX_exist = MDX_exist;
 		}
 
@@ -2190,6 +2176,19 @@ public class DBF implements Closeable {
 	 */
 	public static String getEncodingType() {
 		return encodedType;
+	}
+
+
+	/**
+	 * Combined method to set encoding and matching language driver id.
+	 *
+	 * @param encoding encoding type, default is "8859_1" could use "CP1251" others
+	 */
+	public void setEncoding(String encoding) {
+		encodedType = encoding;
+		if (encoding.equalsIgnoreCase("cp1251") || encoding.equalsIgnoreCase("windows-1251")) {
+			language = (byte) 0xC9;
+		}
 	}
 
 
